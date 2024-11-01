@@ -3,7 +3,7 @@ from sqlalchemy.orm import relationship
 from app.database.base_model import Base
 
 
-class Product(Base):
+class ProductModel(Base):
     __tablename__ = "products"
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String, index=True)
@@ -11,6 +11,5 @@ class Product(Base):
     price = Column(Float)
     quantity = Column(Integer)
     category_id = Column(Integer, ForeignKey('categories.id'))
-    category = relationship("Category")
-
+    category = relationship("CategoryModel")
 
