@@ -15,24 +15,25 @@ class ProductService:
 
     async def get_product(self, product_id: int):
         query = select(ProductModel).filter(ProductModel.id == product_id)
-        db_product = await self.db.execute(query).scalars().first()
+        db_product = await self.db.execute(query)
+        db_product = db_product.scalars().first()
         if db_product is None:
             raise HTTPException(status_code=404, detail="ProductModel not found")
         return db_product
 
-    async def create_product(self, ProductModel: ProductCreate):
-        db_product = ProductModel(**ProductModel.dict())
-        db_product.save()
+    async def create_product(self, product: ProductCreate):
+        db_product = ProductModel(**product.dict())
+        await db_product.save(self.db)
         return db_product
 
     async def update_product(self, product_id: int, ProductModel: ProductUpdate):
-        db_product = self.get_product(product_id)
+        db_product = await self.get_product(product_id)
         await db_product.update(self.db, **ProductModel.dict(exclude_unset=True))
         return db_product
 
     async def delete_product(self, product_id: int):
-        db_product = self.get_product(product_id)
+        db_product = await self.get_product(product_id)
         if db_product is None:
             raise HTTPException(status_code=404, detail="ProductModel not found")
         await db_product.delete(self.db)
-        return True
+        return db_product

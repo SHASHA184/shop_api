@@ -19,6 +19,12 @@ async def read_products(skip: int = 0, limit: int = 10, db: Session = Depends(ge
     return await service.get_products(skip=skip, limit=limit)
 
 
+@router.get("/products/{product_id}", response_model=Product)
+async def read_product(product_id: int, db: Session = Depends(get_db)):
+    service = ProductService(db)
+    return await service.get_product(product_id)
+
+
 @router.put("/products/{product_id}", response_model=Product)
 async def update_product(
     product_id: int, product: ProductUpdate, db: Session = Depends(get_db)
