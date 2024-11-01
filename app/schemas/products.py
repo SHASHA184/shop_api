@@ -11,11 +11,11 @@ class ProductCreate(BaseModel):
 
 
 class ProductUpdate(BaseModel):
-    name: Optional[str]
-    description: Optional[str]
-    price: Optional[float]
-    quantity: Optional[int]
-    category_id: Optional[int]
+    name: Optional[str] = None
+    description: Optional[str] = None
+    price: Optional[float] = None
+    quantity: Optional[int] = None
+    category_id: Optional[int] = None
 
 
 class Product(ProductCreate):

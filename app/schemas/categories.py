@@ -7,7 +7,7 @@ class CategoryCreate(BaseModel):
 
 
 class CategoryUpdate(BaseModel):
-    name: Optional[str]
+    name: Optional[str] = None
 
 
 class Category(CategoryCreate):
