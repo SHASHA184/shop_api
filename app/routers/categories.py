@@ -10,13 +10,13 @@ router = APIRouter()
 @router.get("/categories/{category_id}", response_model=Category)
 async def read_category(category_id: int, db: Session = Depends(get_db)):
     service = CategoryService(db)
-    return await service.get_category(category_id)
+    return await service.get_one(category_id)
 
 
 @router.post("/categories/", response_model=Category)
 async def create_category(category: CategoryCreate, db: Session = Depends(get_db)):
     service = CategoryService(db)
-    return await service.create_category(category)
+    return await service.create(category)
 
 
 @router.get("/categories/", response_model=list[Category])
@@ -24,7 +24,7 @@ async def read_categories(
     skip: int = 0, limit: int = 10, db: Session = Depends(get_db)
 ):
     service = CategoryService(db)
-    return await service.get_categories(skip=skip, limit=limit)
+    return await service.get(skip=skip, limit=limit)
 
 
 @router.put("/categories/{category_id}", response_model=Category)
@@ -32,10 +32,10 @@ async def update_category(
     category_id: int, category: CategoryCreate, db: Session = Depends(get_db)
 ):
     service = CategoryService(db)
-    return await service.update_category(category_id, category)
+    return await service.update(category_id, category)
 
 
 @router.delete("/categories/{category_id}", response_model=Category)
 async def delete_category(category_id: int, db: Session = Depends(get_db)):
     service = CategoryService(db)
-    return await service.delete_category(category_id)
+    return await service.delete(category_id)

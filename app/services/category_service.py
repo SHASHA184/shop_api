@@ -1,40 +1,29 @@
-from fastapi import HTTPException
-from sqlalchemy.orm import Session
 from app.models.category import CategoryModel
 from schemas.categories import CategoryCreate, CategoryUpdate, Category
 from sqlalchemy import select
+from app.services.base_service import BaseService
 
 
-class CategoryService:
-    def __init__(self, db: Session):
-        self.db = db
-
-    async def get_categories(self, skip: int = 0, limit: int = 100):
+class CategoryService(BaseService):
+    async def get(self, skip: int = 0, limit: int = 10):
         query = select(CategoryModel).offset(skip).limit(limit)
         categories = await self.db.execute(query)
         return categories.scalars().all()
 
-    async def get_category(self, category_id: int):
-        query = select(CategoryModel).filter(CategoryModel.id == category_id)
-        category = await self.db.execute(query)
-        category = category.scalars().first()
-        if category is None:
-            raise HTTPException(status_code=404, detail="Category not found")
-        return category
+    async def get_one(self, id: int):
+        return await self.get_entity_or_404(CategoryModel, id)
 
-    async def create_category(self, category: CategoryCreate):
-        db_category = CategoryModel(**category.dict())
+    async def create(self, obj: CategoryCreate):
+        db_category = CategoryModel(**obj.dict())
         await db_category.save(self.db)
         return db_category
 
-    async def update_category(self, category_id: int, category: CategoryUpdate):
-        db_category = await self.get_category(category_id)
-        await db_category.update(self.db, **category.dict(exclude_unset=True))
+    async def update(self, id: int, obj: CategoryUpdate):
+        db_category = await self.get_one(id)
+        await db_category.update(self.db, **obj.dict(exclude_unset=True))
         return db_category
 
-    async def delete_category(self, category_id: int):
-        category = await self.get_category(category_id)
-        if category is None:
-            raise HTTPException(status_code=404, detail="Category not found")
+    async def delete(self, id: int):
+        category = await self.get_one(id)
         await category.delete(self.db)
         return category

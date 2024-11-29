@@ -9,3 +9,4 @@ class UserModel(Base):
     username = Column(String, unique=True, index=True, nullable=False)
     email = Column(String(120), unique=True, nullable=False)
     password = Column(String, nullable=False)
+    reservations = relationship("ReservationModel", back_populates="user", cascade="all, delete-orphan")
