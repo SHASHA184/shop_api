@@ -1,5 +1,5 @@
 from aioredis import Redis, from_url
-from config import REDIS_HOST, REDIS_PORT, REDIS_PASSWORD
+from config import REDIS_URL, REDIS_PASSWORD
 import json
 
 
@@ -10,7 +10,10 @@ class RedisService:
     async def redis(self):
         if self._redis is None:
             self._redis = await from_url(
-                f"redis://{REDIS_HOST}:{REDIS_PORT}", password=REDIS_PASSWORD
+                REDIS_URL,
+                password=REDIS_PASSWORD or None,
+                encoding="utf-8",
+                decode_responses=True
             )
         return self._redis
 

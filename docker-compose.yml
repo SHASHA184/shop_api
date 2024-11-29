@@ -10,20 +10,27 @@ services:
       - .:/app
     env_file:
       - .env
-    # depends_on:
-    #   - db
+    depends_on:
+      - db
+      - redis
+  
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
 
-  # db:
-  #   image: postgres:15
-  #   container_name: postgres_db
-  #   environment:
-  #     POSTGRES_USER: myuser
-  #     POSTGRES_PASSWORD: mypassword
-  #     POSTGRES_DB: mydb
-  #   ports:
-  #     - "5432:5432"
-  #   volumes:
-  #     - postgres_data:/var/lib/postgresql/data
+  db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: shop_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
 
-# volumes:
-#   postgres_data:
+volumes:
+  postgres_data:
