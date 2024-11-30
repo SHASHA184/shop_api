@@ -31,7 +31,7 @@ class ProductService(BaseService):
             cached_product = await self.redis_service.get_json(cache_key)
 
             if cached_product:
-                return cached_product[0]
+                return cached_product
 
         product = await self.get_entity_or_404(ProductModel, id)
         await self.redis_service.set_json(

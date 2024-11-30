@@ -1,20 +1,36 @@
 from pydantic import BaseModel
 from typing import Optional
+from typing import List
 
-class OrderCreate(BaseModel):
-    user_id: int
+
+class OrderItemCreate(BaseModel):
     product_id: int
     quantity: int
 
 
-class OrderUpdate(BaseModel):
-    user_id: Optional[int] = None
-    product_id: Optional[int] = None
-    quantity: Optional[int] = None
-
-
-class Order(OrderCreate):
+class OrderItem(OrderItemCreate):
     id: int
+    price_at_order_time: float
 
     class Config:
         orm_mode = True
+        from_attributes = True
+
+
+class OrderUpdate(BaseModel):
+    items: Optional[List[OrderItemCreate]] = None
+
+
+class OrderCreate(BaseModel):
+    user_id: int
+    items: List[OrderItemCreate]
+
+
+class Order(BaseModel):
+    id: int
+    user_id: int
+    items: List[OrderItem]
+
+    class Config:
+        orm_mode = True
+        from_attributes = True

@@ -4,8 +4,7 @@ import json
 
 
 class RedisService:
-    def __init__(self):
-        self._redis = None
+    _redis: Redis = None
 
     async def redis(self):
         if self._redis is None:
@@ -17,11 +16,15 @@ class RedisService:
             )
         return self._redis
 
-    async def set_json(self, key: str, value: object, path: str = "$"):
+    async def set_json(self, key: str, value: object, path: str = "$", expire: int = None):
         redis = await self.redis()
-        if not isinstance(value, str):
+        if isinstance(value, list):
+            value = [json.dumps(item) for item in value]
+        else:
             value = json.dumps(value)
         await redis.execute_command("JSON.SET", key, path, value)
+        if expire is not None:
+            await redis.expire(key, expire)
 
     async def get_json(self, key: str, path: str = "$") -> dict:
         redis = await self.redis()
@@ -30,8 +33,7 @@ class RedisService:
             return None
         result = json.loads(result)
         if isinstance(result[0], dict):
-            print(result)
-            return result
+            return result[0]
         elif isinstance(result[0], list):
             result = result[0]
             return [json.loads(item) for item in result]
